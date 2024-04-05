@@ -8,3 +8,7 @@ A busca pelas mensagens alvo da deleção tira proveito do próprio sistema de b
 
 Toda a execução é feita em função dos parâmetros em *settings.py*, arquivo que deve ser examinado pelo usuário.
 
+### Créditos
+
+* [Discord](https://discord.com)
+* [Selenium](https://selenium.dev/)
