@@ -1,3 +1,7 @@
+"""
+Discord can 
+"""
+
 import time
 
 from miscellaneous import *
