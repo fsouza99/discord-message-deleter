@@ -1,5 +1,9 @@
 """
 Define execution parameters on settings.py before running this script.
+
+The search for messages targeted for deletion takes advantage of Discord's own search system, and is therefore subject to its limitations.
+
+It should also be noted that the deletion of a number of messages may not be instantly reflected in all clients.
 """
 
 import importlib
@@ -17,7 +21,7 @@ options.add_argument('-headless')
 options.add_argument('--log-level=3')
 
 # Chrome specific.
-service = webdriver.ChromeService(log_output='chrome-log')
+service = webdriver.ChromeService(log_output='chrome-driver.log')
 
 print('Loading web driver.')
 driver = webdriver.Chrome(options=options, service=service)
@@ -76,22 +80,30 @@ start_time = time.time()
 
 nil_count, progress = 0, 0
 while nil_count <= NIL_TOLERANCE and progress < TARGET_COUNT:
+
 	try:
 		print(f'\nNew iteration of search and delete.')
-		status = bot.search_and_delete()
+		# Inform the bot with the right number of messages to delete.
+		status = bot.search_and_delete(TARGET_COUNT - progress)
 	except Exception as e:
-		print('\nERROR.', end='')
-		status = 0
-	progress += status
-	elapsed_time = time.time() - start_time
-	print(f'\nIteration interrupted.\nElapsed time: {formatted_time(int(elapsed_time))}.')
+		print('\nUnexpected error:', e)
+		break
+
 	if status == 0:
+		# Total iterations with zero messages deleted.
 		nil_count += 1
+	else:
+		# Total messages deleted.
+		progress += status
+
+	elapsed_time = time.time() - start_time
+	print(f'\nTotal progress: {progress}\nZero status occurences: {nil_count}\nElapsed time: {formatted_time(int(elapsed_time))}')
 
 # Finishing session.
 
 print('\nInteraction finished.\nClosing the driver.')
 driver.quit()
+
 
 
 

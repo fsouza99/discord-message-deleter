@@ -1,3 +1,7 @@
+"""
+Discord can 
+"""
+
 import time
 
 from miscellaneous import *
@@ -12,12 +16,14 @@ class Bot():
 	def __init__(self, driver):
 		self.driver = driver
 
-	def get_element(self, locator):
+	def get_element(self, locator, origin=None):
 		"""
 		Returns the element or None if it does not exist.
 		"""
+		if origin is None:
+			origin = self.driver
 		try:
-			element = self.driver.find_element(locator[0], locator[1])
+			element = origin.find_element(locator[0], locator[1])
 		except Exception:
 			return None
 		return element
@@ -83,8 +89,8 @@ class Bot():
 		Current URL: https://discord.com/channels/@me ("lobby" page)
 		Enters the target server.
 		"""
-		clickable_div = self.get_element(locator=(
-			By.CSS_SELECTOR, f"[data-dnd-name=\u0022{SERVER}\u0022]"))
+		clickable_div = self.get_element(
+			locator=(By.CSS_SELECTOR, f"[data-dnd-name=\u0022{SERVER}\u0022]"))
 		clickable_div.click()
 		return
 
@@ -102,62 +108,67 @@ class Bot():
 		search_box.click()
 		
 		self.type_and_confirm(search_key())
-		time.sleep(1.5)
 		
 		time_filter_button = self.driver.find_element(
 			By.XPATH, "//div[text()='Antigo']")
 		time_filter_button.click()
-		
-		time.sleep(1.5)
+
 		return
 
-	def delete_searched_msgs(self) -> int:
+	def delete_searched_msgs(self, target_count) -> int:
 		"""
 		Current URL: https://discord.com/channels/<digits>/<digits> (inside server).
-		Delete all search-resulting messages.
+		Delete a number of search-resulting messages while respecting wait intervals to avoid skipping.
 		Returns the number of deleted messages.
 		"""
+
 		progress = 0
 		parent_div = self.get_element(
 			locator=(By.CSS_SELECTOR, 'div#search-results'))
-		if parent_div is None:
-			print("No messages could be retrieved.")
-			return progress
 
-		while True:
+		while progress < target_count:
 
-			print('New page.')
-			items = parent_div.find_element(By.TAG_NAME, 'ul').find_elements(
-				By.TAG_NAME, 'li')
+			print('Loading new results.')
 
-			for item in items:
+			if parent_div is None:
+				print("New search results could not be retrieved.")
+				break
+
+			items = self.get_element(
+				origin=parent_div,
+				locator=(By.TAG_NAME, 'ul'))
+			if items is None:
+				print('Messages could not be retrieved from search results.')
+				break
+			items = items.find_elements(By.TAG_NAME, 'li')
+
+			for item in items[:target_count - progress]:
 				self.scroll_to(item)
 				self.right_click(item)
-				time.sleep(0.25)
-				delete_button = self.get_element(locator=(
-					By.CSS_SELECTOR, 'div#message-delete'))
+				delete_button = self.get_element(
+					locator=(By.CSS_SELECTOR, 'div#message-delete'))
+				time.sleep(0.5)
 				self.shift_click(delete_button)
-				time.sleep(0.25)
 				progress += 1
 				print(f'\rDeleted msgs: {progress}', end='')
 			print()
 
-			next_page_button = self.get_element(locator=(
-				By.XPATH, "//button[@rel=\u0022next\u0022]"))
+			next_page_button = self.get_element(
+				locator=(By.XPATH, "//button[@rel=\u0022next\u0022]"))
 			if next_page_button is None:
 				print('No \u0022Next page\u0022 button found.')
-				return progress
+				break
 			if not next_page_button.is_enabled():
-				print('No more apparent pages.')
-				return progress
+				print('No more apparent result pages.')
+				break
 			next_page_button.click()
-			time.sleep(1)
-			parent_div = self.get_element(locator=(
-				By.CSS_SELECTOR, 'div#search-results'))
+			
+			parent_div = self.get_element(
+				locator=(By.CSS_SELECTOR, 'div#search-results'))
 		
 		return progress
 
-	def search_and_delete(self) -> int:
+	def search_and_delete(self, target_count=INFINITE) -> int:
 		"""
 		Current URL: https://discord.com/channels/<digits>/<digits> (inside server).
 		Performs a search and delete all resulting messages.
@@ -165,4 +176,5 @@ class Bot():
 		print('Searching for messages.')
 		self.search_messages()
 		print('Deleting search results.')
-		return self.delete_searched_msgs()
+		deletions = self.delete_searched_msgs(target_count)
+		return deletions
