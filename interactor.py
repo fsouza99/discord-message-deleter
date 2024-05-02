@@ -1,7 +1,3 @@
-"""
-Discord can 
-"""
-
 import time
 
 from miscellaneous import *
@@ -44,7 +40,7 @@ class Bot():
 
 	def type_and_confirm(self, message: str):
 		self.type(message)
-		time.sleep(0.2)
+		time.sleep(0.2) # Safety measure.
 		self.press_enter()
 		return
 
@@ -53,9 +49,9 @@ class Bot():
 		Click somewhere while holding SHIFT.
 		"""
 		ActionChains(self.driver).key_down(Keys.SHIFT).perform()
-		time.sleep(0.1)
+		time.sleep(0.1) # Safety measure.
 		ActionChains(self.driver).click(target).perform()
-		time.sleep(0.1)
+		time.sleep(0.1) # Safety measure.
 		ActionChains(self.driver).key_up(Keys.SHIFT).perform()
 		return
 
@@ -108,10 +104,12 @@ class Bot():
 		search_box.click()
 		
 		self.type_and_confirm(search_key())
-		
+
 		time_filter_button = self.driver.find_element(
 			By.XPATH, "//div[text()='Antigo']")
+		time.sleep(1) # Safety measure.
 		time_filter_button.click()
+		time.sleep(1) # Safety measure.
 
 		return
 
@@ -121,12 +119,11 @@ class Bot():
 		Delete a number of search-resulting messages while respecting wait intervals to avoid skipping.
 		Returns the number of deleted messages.
 		"""
-
 		progress = 0
 		parent_div = self.get_element(
 			locator=(By.CSS_SELECTOR, 'div#search-results'))
 
-		while progress < target_count:
+		while True:
 
 			print('Loading new results.')
 
@@ -147,11 +144,14 @@ class Bot():
 				self.right_click(item)
 				delete_button = self.get_element(
 					locator=(By.CSS_SELECTOR, 'div#message-delete'))
-				time.sleep(0.5)
 				self.shift_click(delete_button)
 				progress += 1
 				print(f'\rDeleted msgs: {progress}', end='')
 			print()
+
+			if progress >= target_count:
+				print("Target count reached.")
+				break
 
 			next_page_button = self.get_element(
 				locator=(By.XPATH, "//button[@rel=\u0022next\u0022]"))
