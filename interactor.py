@@ -1,8 +1,3 @@
-"""
-Many of the time.sleep() calls help keeping the deletion order correct.
-Removing these calls might result in a more or less random deletion.
-"""
-
 import time
 
 from miscellaneous import *
@@ -124,12 +119,11 @@ class Bot():
 		Delete a number of search-resulting messages while respecting wait intervals to avoid skipping.
 		Returns the number of deleted messages.
 		"""
-
 		progress = 0
 		parent_div = self.get_element(
 			locator=(By.CSS_SELECTOR, 'div#search-results'))
 
-		while progress < target_count:
+		while True:
 
 			print('Loading new results.')
 
@@ -150,12 +144,14 @@ class Bot():
 				self.right_click(item)
 				delete_button = self.get_element(
 					locator=(By.CSS_SELECTOR, 'div#message-delete'))
-				time.sleep(0.5) # Safety measure.
 				self.shift_click(delete_button)
-				time.sleep(0.5) # Safety measure.
 				progress += 1
 				print(f'\rDeleted msgs: {progress}', end='')
 			print()
+
+			if progress >= target_count:
+				print("Target count reached.")
+				break
 
 			next_page_button = self.get_element(
 				locator=(By.XPATH, "//button[@rel=\u0022next\u0022]"))
