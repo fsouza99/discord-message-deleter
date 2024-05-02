@@ -15,6 +15,8 @@ from miscellaneous import *
 
 from selenium import webdriver
 
+print(f'User: {USERNAME}\nTarget server: {SERVER}')
+
 print('Setting driver options.')
 options = webdriver.ChromeOptions()
 options.add_argument('-headless')

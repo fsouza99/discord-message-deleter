@@ -1,3 +1,8 @@
+"""
+Many of the time.sleep() calls help keeping the deletion order correct.
+Removing these calls might result in a more or less random deletion.
+"""
+
 import time
 
 from miscellaneous import *
@@ -40,7 +45,7 @@ class Bot():
 
 	def type_and_confirm(self, message: str):
 		self.type(message)
-		time.sleep(0.2)
+		time.sleep(0.2) # Safety measure.
 		self.press_enter()
 		return
 
@@ -49,9 +54,9 @@ class Bot():
 		Click somewhere while holding SHIFT.
 		"""
 		ActionChains(self.driver).key_down(Keys.SHIFT).perform()
-		time.sleep(0.1)
+		time.sleep(0.1) # Safety measure.
 		ActionChains(self.driver).click(target).perform()
-		time.sleep(0.1)
+		time.sleep(0.1) # Safety measure.
 		ActionChains(self.driver).key_up(Keys.SHIFT).perform()
 		return
 
@@ -104,10 +109,12 @@ class Bot():
 		search_box.click()
 		
 		self.type_and_confirm(search_key())
-		
+
 		time_filter_button = self.driver.find_element(
 			By.XPATH, "//div[text()='Antigo']")
+		time.sleep(1) # Safety measure.
 		time_filter_button.click()
+		time.sleep(1) # Safety measure.
 
 		return
 
@@ -143,8 +150,9 @@ class Bot():
 				self.right_click(item)
 				delete_button = self.get_element(
 					locator=(By.CSS_SELECTOR, 'div#message-delete'))
-				time.sleep(0.5)
+				time.sleep(0.5) # Safety measure.
 				self.shift_click(delete_button)
+				time.sleep(0.5) # Safety measure.
 				progress += 1
 				print(f'\rDeleted msgs: {progress}', end='')
 			print()
