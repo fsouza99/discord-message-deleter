@@ -3,8 +3,6 @@ import time
 from miscellaneous import *
 
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support.expected_conditions import visibility_of_element_located
 from selenium.webdriver import Keys, ActionChains
 
 class Bot():
