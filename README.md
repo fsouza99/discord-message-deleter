@@ -12,6 +12,28 @@ O programa tentará excluir mensagens em ordem, da mais antiga para a mais recen
 
 Deve-se observar também que a exclusão de várias mensagens pode não se refletir instantaneamente em todos os clientes.
 
+### Entrada de dados
+
+Dados de entrada são lidos do arquivo *config/config.json*, estruturado de acordo com o *template* no mesmo diretório. Se o arquivo não existir, o *script* principal o criará.
+
+#### Opções de entrada
+
+Os campos em *global_options*, em arquivos de configuração, explicam-se assim:
+
+- ***login_attempts***: Número máximo de vezes que o programa tentará fazer login.
+
+- ***selection_attempts***: Número máximo de vezes que o programa tentará adentrar o servidor indicado.
+
+- ***nil_tolerance***: Número máximo permitido de iterações que completam sem apagar nenhuma mensagem.
+
+- ***target_count***: Número de mensagens a deletar.
+
+#### Outras observações
+
+- Informe datas no formato *aaaa-mm-dd*.
+- É possível informar uma chave completa de busca no campo *"searchkey"*. Pode-se inclusive realizar uma busca no Discord e colar nesse campo o conteúdo da caixa de busca.
+- Atribua *null* aos filtros que você não quiser utilizar.
+
 ### Créditos
 
 * [Discord](https://discord.com)

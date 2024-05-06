@@ -1,17 +1,19 @@
-"""
-Define execution parameters on settings.py before running this script.
-"""
-
-import importlib
 import time
-
-import interactor
-
-from miscellaneous import *
 
 from selenium import webdriver
 
-print(f'User: {USERNAME}\nTarget server: {SERVER}')
+from interactor import Bot
+from miscellaneous import formatted_time, set_environment
+from settings import Settings
+
+if set_environment():
+	print("Enter your input in config\\config.json before running again.")
+	exit(0)
+
+global_settings = Settings()
+global_settings.load_config()
+
+print(f'User: {global_settings.username}\nTarget server: {global_settings.server}')
 
 print('Setting driver options.')
 options = webdriver.ChromeOptions()
@@ -26,7 +28,7 @@ driver = webdriver.Chrome(options=options, service=service)
 driver.implicitly_wait(10)
 
 print('Setting bot.')
-bot = interactor.Bot(driver)
+bot = Bot(driver, global_settings)
 
 print('Loading login page.')
 driver.get("https://discord.com/login")
@@ -34,9 +36,9 @@ driver.get("https://discord.com/login")
 # Auto login.
 
 h = 1
-while h <= LOGIN_ATTEMPTS:
+while h <= global_settings.login_attempts:
 	try:
-		print(f'Login attempt ({h}/{LOGIN_ATTEMPTS}): ', end='')
+		print(f'Login attempt ({h}/{global_settings.login_attempts}): ', end='')
 		bot.perform_login()
 		print('Success.')
 		break
@@ -46,16 +48,16 @@ while h <= LOGIN_ATTEMPTS:
 	driver.refresh()
 	h += 1
 
-if h > LOGIN_ATTEMPTS:
+if h > global_settings.login_attempts:
 	print('Login could not be performed.')
 	exit(1)
 
 # Target server selection.
 
 h = 1
-while h <= SELECTION_ATTEMPTS:
+while h <= global_settings.selection_attempts:
 	try:
-		print(f'Server selection attempt ({h}/{SELECTION_ATTEMPTS}): ', end='')
+		print(f'Server selection attempt ({h}/{global_settings.selection_attempts}): ', end='')
 		bot.select_server()
 		print('Success.')	
 		break
@@ -65,7 +67,7 @@ while h <= SELECTION_ATTEMPTS:
 	driver.refresh()
 	h += 1
 
-if h > SELECTION_ATTEMPTS:
+if h > global_settings.selection_attempts:
 	print('Target server could not be selected.')
 	exit(1)
 
@@ -77,14 +79,14 @@ start_time = time.time()
 # Search and deletion of messages.
 
 nil_count, progress = 0, 0
-while nil_count <= NIL_TOLERANCE and progress < TARGET_COUNT:
+while nil_count <= global_settings.nil_tolerance and progress < global_settings.target_count:
 
 	print(f'\nNew iteration of search and delete.')
 	driver.refresh()
 
 	try:
 		# Inform the bot with the right number of messages to delete.
-		status = bot.search_and_delete(TARGET_COUNT - progress)
+		status = bot.search_and_delete(global_settings.target_count - progress)
 	except Exception as e:
 		print('\nUnexpected error:', e)
 		break
@@ -103,8 +105,5 @@ while nil_count <= NIL_TOLERANCE and progress < TARGET_COUNT:
 
 print('\nInteraction finished.\nClosing the driver.')
 driver.quit()
-
-
-
 
 

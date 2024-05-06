@@ -1,14 +1,13 @@
 import time
 
-from miscellaneous import *
-
 from selenium.webdriver.common.by import By
 from selenium.webdriver import Keys, ActionChains
 
 class Bot():
 
-	def __init__(self, driver):
+	def __init__(self, driver, settings):
 		self.driver = driver
+		self.settings = settings
 
 	def get_element(self, locator, origin=None):
 		"""
@@ -67,11 +66,11 @@ class Bot():
 
 		email_input = form.find_element(By.NAME, 'email')
 		email_input.clear()
-		email_input.send_keys(EMAIL)
+		email_input.send_keys(self.settings.email)
 
 		password_input = form.find_element(By.NAME, 'password')
 		password_input.clear()
-		password_input.send_keys(PASSWORD)
+		password_input.send_keys(self.settings.password)
 
 		login_button = form.find_elements(By.TAG_NAME, "button")[1]
 		login_button.click()
@@ -84,7 +83,7 @@ class Bot():
 		Enters the target server.
 		"""
 		clickable_div = self.get_element(
-			locator=(By.CSS_SELECTOR, f"[data-dnd-name=\u0022{SERVER}\u0022]"))
+			locator=(By.CSS_SELECTOR, f"[data-dnd-name=\u0022{self.settings.server}\u0022]"))
 		clickable_div.click()
 		return
 
@@ -101,7 +100,7 @@ class Bot():
 			By.CSS_SELECTOR, f"[aria-label=\u0022Buscar\u0022]")
 		search_box.click()
 		
-		self.type_and_confirm(search_key())
+		self.type_and_confirm(self.settings.search_key())
 
 		time_filter_button = self.driver.find_element(
 			By.XPATH, "//div[text()='Antigo']")
@@ -142,6 +141,7 @@ class Bot():
 				self.right_click(item)
 				delete_button = self.get_element(
 					locator=(By.CSS_SELECTOR, 'div#message-delete'))
+				time.sleep(0.2) # Safety measure.
 				self.shift_click(delete_button)
 				progress += 1
 				print(f'\rDeleted msgs: {progress}', end='')
@@ -166,7 +166,7 @@ class Bot():
 		
 		return progress
 
-	def search_and_delete(self, target_count=INFINITE) -> int:
+	def search_and_delete(self, target_count) -> int:
 		"""
 		Current URL: https://discord.com/channels/<digits>/<digits> (inside server).
 		Performs a search and delete all resulting messages.
