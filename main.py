@@ -1,12 +1,7 @@
 """
 Define execution parameters on settings.py before running this script.
-
-The search for messages targeted for deletion takes advantage of Discord's own search system, and is therefore subject to its limitations.
-
-It should also be noted that the deletion of a number of messages may not be instantly reflected in all clients.
 """
 
-import importlib
 import time
 
 import interactor
@@ -14,6 +9,8 @@ import interactor
 from miscellaneous import *
 
 from selenium import webdriver
+
+print(f'User: {USERNAME}\nTarget server: {SERVER}')
 
 print('Setting driver options.')
 options = webdriver.ChromeOptions()
@@ -81,8 +78,10 @@ start_time = time.time()
 nil_count, progress = 0, 0
 while nil_count <= NIL_TOLERANCE and progress < TARGET_COUNT:
 
+	print(f'\nNew iteration of search and delete.')
+	driver.refresh()
+
 	try:
-		print(f'\nNew iteration of search and delete.')
 		# Inform the bot with the right number of messages to delete.
 		status = bot.search_and_delete(TARGET_COUNT - progress)
 	except Exception as e:
