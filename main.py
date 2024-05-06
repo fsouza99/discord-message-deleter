@@ -2,7 +2,6 @@
 Define execution parameters on settings.py before running this script.
 """
 
-import importlib
 import time
 
 import interactor
