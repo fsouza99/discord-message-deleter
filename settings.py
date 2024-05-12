@@ -1,38 +1,34 @@
-# Might be useful.
-INFINITE = 2**31-1
+import json
+from os import listdir
 
-# Access control.
-LOGIN_ATTEMPTS = 3
-SELECTION_ATTEMPTS = 3
+CONFIG_FILE = "config\\config.json"
+CONFIG_TEMPLATE = "config\\config-template.json"
 
-"""
-Autorestart control
+class Settings():
 
-NIL_TOLERANCE: How many zero status (errors and undeleted messages) will be tolerated.
-TARGET_COUNT: How many messages to delete.
-"""
-NIL_TOLERANCE = 3
-TARGET_COUNT = 100
+	def load_config(self):
+		with open(CONFIG_FILE, encoding='utf8') as file:
+			data = json.load(file)
+		for scope in data.keys():
+			for key, value in data[scope].items():
+				value = "" if value is None else value
+				setattr(self, key, value)
+		return
 
-# User information.
-EMAIL = "myemail@domain.com"
-USERNAME = "username"
-PASSWORD = "password"
+	def search_key(self):
+		if self.searchkey:
+			return self.searchkey
+		return \
+			  f"de: {self.username} " \
+			+ f"em: {self.channel} " \
+			+ f"tem: {self.item} " \
+			+ f"menciona: {self.mention} " \
+			+ f"antes: {self.before} " \
+			+ f"depois: {self.after} " \
+			+ f"durante: {self.during} " \
+			+ f"{self.sentence}"
 
-"""
-Search keys
 
-Set dates on yyyy-mm-dd format. Assign an empty string to the filter you don't want to apply.
 
-Alternatively, you can set a complete SEARCHKEY directly. Set it to None if you don't want to use it. Hint: You can run a search on Discord and paste the search box's content into SEARCHKEY.
-"""
-SERVER = "TargetServer"
-CHANNEL = "TargetChannel"
-ITEM = ""
-DURING = ""
-AFTER = "2022-01-01"
-BEFORE = "2022-12-31"
-SENTENCE = ""
-MENTION = "Friend"
-SEARCHKEY = None
+
 

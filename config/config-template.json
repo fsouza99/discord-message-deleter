@@ -1,0 +1,24 @@
+{
+    "global_options": {
+        "login_attempts": 3,
+        "selection_attempts": 3,
+        "nil_tolerance": 3,
+        "target_count": 100
+    },
+    "userinfo": {
+        "email": "myemail@domain.com",
+        "username": "username",
+        "password": "password"
+    },
+    "search_criteria": {
+        "server": "Target Server",
+        "channel": "TargetChannel",
+        "item": null,
+        "during": null,
+        "after": "2022-01-01",
+        "before": "2022-12-31",
+        "sentence": null,
+        "mention": "Friend",
+        "searchkey": null
+    }
+}
