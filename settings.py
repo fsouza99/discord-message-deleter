@@ -15,7 +15,7 @@ class Settings():
 				setattr(self, key, value)
 		return
 
-	def search_key(self):
+	def search_key(self) -> str:
 		if self.searchkey:
 			return self.searchkey
 		return \
@@ -27,6 +27,9 @@ class Settings():
 			+ f"depois: {self.after} " \
 			+ f"durante: {self.during} " \
 			+ f"{self.sentence}"
+
+	def briefing(self) -> str:
+		return f"User: {self.username}\nTarget server: {self.server}\nSearch key: \u0022{self.search_key()}\u0022"
 
 
 
