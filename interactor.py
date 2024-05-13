@@ -11,7 +11,7 @@ class Bot():
 
 	def get_element(self, locator, origin=None):
 		"""
-		Returns the element or None if it does not exist.
+		Returns the pointed element or None if it does not exist.
 		"""
 		if origin is None:
 			origin = self.driver
@@ -20,6 +20,18 @@ class Bot():
 		except Exception:
 			return None
 		return element
+
+	def get_elements(self, locator, origin=None):
+		"""
+		Returns the pointed elements or None if they do not exist.
+		"""
+		if origin is None:
+			origin = self.driver
+		try:
+			elements = origin.find_elements(locator[0], locator[1])
+		except Exception:
+			return None
+		return elements
 
 	# Simple interactions
 
@@ -128,23 +140,28 @@ class Bot():
 				print("New search results could not be retrieved.")
 				break
 
-			items = self.get_element(
+			item_groups = self.get_elements(
 				origin=parent_div,
 				locator=(By.TAG_NAME, 'ul'))
-			if items is None:
+			if item_groups is None:
 				print('Messages could not be retrieved from search results.')
 				break
-			items = items.find_elements(By.TAG_NAME, 'li')
 
-			for item in items[:target_count - progress]:
-				self.scroll_to(item)
-				self.right_click(item)
-				delete_button = self.get_element(
-					locator=(By.CSS_SELECTOR, 'div#message-delete'))
-				time.sleep(0.2) # Safety measure.
-				self.shift_click(delete_button)
-				progress += 1
-				print(f'\rDeleted msgs: {progress}', end='')
+			for group in item_groups:
+
+				if progress >= target_count:
+					break
+
+				items = group.find_elements(By.TAG_NAME, 'li')
+				for item in items[:target_count - progress]:
+					self.scroll_to(item)
+					self.right_click(item)
+					delete_button = self.get_element(
+						locator=(By.CSS_SELECTOR, 'div#message-delete'))
+					time.sleep(0.2) # Safety measure.
+					self.shift_click(delete_button)
+					progress += 1
+					print(f'\rDeleted msgs: {progress}', end='')
 			print()
 
 			if progress >= target_count:

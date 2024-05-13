@@ -12,11 +12,7 @@ if set_environment():
 
 global_settings = Settings()
 global_settings.load_config()
-
-print( \
-f'''User: {global_settings.username}
-Target server: {global_settings.server}
-Search key: {global_settings.search_key()}''')
+print(global_settings.briefing())
 
 print('Setting driver options.')
 options = webdriver.ChromeOptions()
