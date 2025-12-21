@@ -1,16 +1,16 @@
 {
-    "global_options": {
+    "run": {
         "login_attempts": 3,
         "selection_attempts": 3,
         "nil_tolerance": 3,
         "target_count": 100
     },
-    "userinfo": {
-        "email": "myemail@domain.com",
+    "user": {
+        "email": "user@email.com",
         "username": "username",
         "password": "password"
     },
-    "search_criteria": {
+    "search": {
         "server": "Target Server",
         "channel": "TargetChannel",
         "item": null,

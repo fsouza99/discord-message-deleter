@@ -1,5 +1,6 @@
-__pycache__
+__*
+
 *.log
-*_ignore*
-config/*
-!config-template.json
+
+config.json
+
