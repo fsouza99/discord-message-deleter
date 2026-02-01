@@ -8,7 +8,7 @@ Dados de entrada são lidos do arquivo *config/config.json*, estruturado de acor
 
 #### Opções de entrada
 
-Os campos em *global_options*, em arquivos de configuração, explicam-se assim:
+Os campos em *run*, em arquivos de configuração, explicam-se assim:
 
 - ***login_attempts***: Número máximo de vezes que o programa tentará fazer login.
 
